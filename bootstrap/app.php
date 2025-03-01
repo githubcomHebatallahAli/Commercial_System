@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Admin;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,8 +14,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'auth' => \App\Http\Middleware\AuthenticateMiddleware::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'proxies' => \App\Http\Middleware\TrustProxies::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+
+    })
+        ->booted(function() {
+
+            Gate::policy(Admin::class, AdminPolicy::class);
+
     })->create();
+
