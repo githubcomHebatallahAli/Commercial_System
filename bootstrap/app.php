@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use App\Policies\AdminPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
