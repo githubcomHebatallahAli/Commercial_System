@@ -8,6 +8,7 @@ use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ShipmentRequest;
 use App\Http\Resources\Admin\ShipmentResource;
+use App\Http\Requests\Admin\UpdatePaidAmountRequest;
 use App\Http\Resources\Admin\ShipmentProductResource;
 
 class ShipmentController extends Controller
@@ -17,9 +18,10 @@ class ShipmentController extends Controller
     {
         $this->authorize('manage_users');
 
-        // $Shipment = Shipment::paginate(10);
-
         $Shipment = Shipment::orderBy('created_at', 'desc')->paginate(10);
+
+        $paidAmount = $Shipment->sum('paidAmount');
+        $remainingAmount = $Shipment->sum('remainingAmount');
 
                   return response()->json([
                       'data' =>  ShipmentResource::collection($Shipment),
@@ -32,14 +34,17 @@ class ShipmentController extends Controller
                         'next_page_url' => $Shipment->nextPageUrl(),
                         'prev_page_url' => $Shipment->previousPageUrl()
                     ],
+                    'statistics' => [
+                    'paid_amount' => number_format($paidAmount, 2, '.', ''),
+                    'remaining_amount' => number_format($remainingAmount, 2, '.', ''),
+                    ],
 
                       'message' => "Show All Shipment."
                   ]);
     }
 
 
-
-    public function create(ShipmentRequest $request)
+public function create(ShipmentRequest $request)
 {
     $this->authorize('manage_users');
 
@@ -49,10 +54,10 @@ class ShipmentController extends Controller
         "supplierName" => $request->supplierName,
         "importer" => $request->importer,
         "place" => $request->place,
-        'creationDate' => now()->timezone('Africa/Cairo')
-            ->format('Y-m-d h:i:s'),
+        'paidAmount' => $request->paidAmount ?? 0,
+        'status' => 'pending',
+        'creationDate' => now()->timezone('Africa/Cairo')->format('Y-m-d h:i:s'),
     ]);
-
 
     if ($request->has('products')) {
         foreach ($request->products as $product) {
@@ -78,12 +83,54 @@ class ShipmentController extends Controller
     $Shipment->updateShipmentProductsCount();
 
     $Shipment->totalPrice = $Shipment->calculateTotalPrice();
+
+    $remainingAmount = $Shipment->totalPrice - $Shipment->paidAmount;
+    $Shipment->remainingAmount = $remainingAmount;
+
+    if ($Shipment->paidAmount >= $Shipment->totalPrice) {
+        $Shipment->status = 'paid';
+    } else {
+        $Shipment->status = 'pending';
+    }
+
     $Shipment->save();
 
     return response()->json([
         'data' => new ShipmentProductResource($Shipment),
         'message' => "Shipment Created Successfully.",
+    ]);
+}
 
+
+public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
+{
+    $this->authorize('manage_users');
+
+    $shipment = Shipment::findOrFail($id);
+    $paidAmount = $request->paidAmount;
+
+    if ($paidAmount > $shipment->remainingAmount) {
+        return response()->json([
+            'message' => 'المبلغ المدفوع يتجاوز المبلغ المتبقي.',
+        ], 400);
+    }
+
+    $shipment->paidAmount += $paidAmount;
+
+    $remainingAmount = $shipment->totalPrice - $shipment->paidAmount;
+    $shipment->remainingAmount = $remainingAmount;
+
+    if ($remainingAmount <= 0) {
+        $shipment->status = 'paid';
+    } else {
+        $shipment->status = 'pending';
+    }
+
+    $shipment->save();
+
+    return response()->json([
+        'message' => 'تم تحديث المبلغ المدفوع بنجاح.',
+        'data' => new ShipmentProductResource($shipment),
     ]);
 }
 
@@ -92,7 +139,6 @@ class ShipmentController extends Controller
         {
             $this->authorize('manage_users');
             $Shipment = Shipment::find($id);
-
 
             if (!$Shipment) {
                 return response()->json([
@@ -105,48 +151,6 @@ class ShipmentController extends Controller
                 'message' => "Edit Shipment By ID Successfully."
             ]);
         }
-
-    //     public function update(ShipmentRequest $request, string $id)
-    //     {
-    //         $this->authorize('manage_users');
-
-    //        $Shipment =Shipment::findOrFail($id);
-
-    //        if (!$Shipment) {
-    //         return response()->json([
-    //             'message' => "Shipment not found."
-    //         ], 404);
-    //     }
-    //        $Shipment->update([
-    //         "supplierName" => $request->supplierName,
-    //         "importer" => $request->importer,
-    //         "place" => $request->place,
-    //         'creationDate' => now()->timezone('Africa/Cairo')
-    //         ->format('Y-m-d h:i:s'),
-    //         ]);
-
-    //         if ($request->has('products')) {
-    //             $products = [];
-    //             foreach ($request->products as $product) {
-    //                 $products[$product['id']] = [
-    //                     'quantity' => $product['quantity'],
-    //                     'price' => $product['price'],
-    //                 ];
-    //             }
-
-    //             $Shipment->products()->sync($products);
-    //         }
-
-    //         $Shipment->updateShipmentProductsCount();
-
-    //         $Shipment->totalPrice = $Shipment->calculateTotalPrice();
-
-    //        $Shipment->save();
-    //        return response()->json([
-    //         'data' =>new ShipmentProductResource($Shipment),
-    //         'message' => " Update Shipment By Id Successfully."
-    //     ]);
-    // }
 
 
     public function update(ShipmentRequest $request, string $id)
@@ -165,6 +169,8 @@ class ShipmentController extends Controller
         "supplierName" => $request->supplierName,
         "importer" => $request->importer,
         "place" => $request->place,
+        'paidAmount' => $request->paidAmount ?? 0,
+        'status' => 'pending',
         'creationDate' => now()->timezone('Africa/Cairo')->format('Y-m-d h:i:s'),
     ]);
 
@@ -215,6 +221,15 @@ class ShipmentController extends Controller
     $Shipment->updateShipmentProductsCount();
 
     $Shipment->totalPrice = $Shipment->calculateTotalPrice();
+
+    $remainingAmount = $Shipment->totalPrice - $Shipment->paidAmount;
+    $Shipment->remainingAmount = $remainingAmount;
+
+    if ($Shipment->paidAmount >= $Shipment->totalPrice) {
+        $Shipment->status = 'paid';
+    } else {
+        $Shipment->status = 'pending';
+    }
     $Shipment->save();
 
     return response()->json([

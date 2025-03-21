@@ -16,4 +16,5 @@ Route::controller(ShipmentController::class)->prefix('/admin')->middleware('admi
    Route::get('/showDeleted/shipment', 'showDeleted');
 Route::get('/restore/shipment/{id}','restore');
 Route::delete('/forceDelete/shipment/{id}','forceDelete');
+Route::put('/shipment/{id}/update-paid','updatePaidAmount');
    });

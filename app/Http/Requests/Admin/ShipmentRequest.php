@@ -28,6 +28,8 @@ class ShipmentRequest extends FormRequest
              'importer' => 'required|string',
              'place' => 'required|string',
              'creationDate'=> 'nullable|date_format:Y-m-d H:i:s',
+             'paidAmount' => 'required|numeric|regex:/^\d{1,5}(\.\d{1,2})?$/',
+             'status'=> 'nullable|in:pending,paid',
              'products' => 'required|array',
             'products.*.id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',

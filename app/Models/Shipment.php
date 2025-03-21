@@ -15,7 +15,11 @@ class Shipment extends Model
         'importer',
         'place',
         'creationDate',
-        'shipmentProductsCount'
+        'shipmentProductsCount',
+        'totalPrice',
+        'status',
+        'paidAmount',
+        'remainingAmount'
     ];
 
 

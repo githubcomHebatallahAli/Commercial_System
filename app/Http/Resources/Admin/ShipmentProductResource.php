@@ -22,6 +22,9 @@ class ShipmentProductResource extends JsonResource
             "totalPrice" => number_format($this->totalPrice, 2, '.', ''),
             'shipmentProductsCount' => $this -> shipmentProductsCount,
             'creationDate' => $this -> creationDate,
+            'status' => $this -> status,
+            'paidAmount' => number_format($this->paidAmount, 2, '.', ''),
+            'remainingAmount' => number_format($this->remainingAmount, 2, '.', ''),
             'products' => $this->products->map(function ($product) {
                 return [
                     'id' => $product->id,

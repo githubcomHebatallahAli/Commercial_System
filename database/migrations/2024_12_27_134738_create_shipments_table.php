@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('place');
             $table->unsignedBigInteger('shipmentProductsCount')->default(0);
             $table->decimal('totalPrice', 15, 2)->default(0);
+            $table->decimal('paidAmount', 10, 2);
+            $table->decimal('remainingAmount', 10, 2)->nullable();
+            $table->enum('status', ['pending', 'paid'])->default('pending');
             $table->timestamp('creationDate')->nullable();
             $table->softDeletes();
             $table->timestamps();
