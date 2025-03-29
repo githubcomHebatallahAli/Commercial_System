@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('phoNum');
             $table->foreignId('role_id')->nullable()->constrained('roles')->cascadeOnDelete();
-            $table->enum('status', ['active', 'notActive'])->default('active')->nullable();
+            $table->enum('status', ['active', 'notActive'])->default('active');
             $table->string('image')->nullable();
             $table->string('ip')->nullable();
             $table->timestamp('last_login_at')->nullable();
