@@ -78,7 +78,8 @@ class AdminAuthController extends Controller
         $adminData = array_merge(
             $validator->validated(),
             ['password' => bcrypt($request->password)],
-            ['ip' => $request->ip()]
+            ['ip' => $request->ip()],
+            ['status' => 'active'],
         );
 
         if (isset($imagePath)) {
