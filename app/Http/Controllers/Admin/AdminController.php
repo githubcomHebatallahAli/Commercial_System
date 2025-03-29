@@ -149,7 +149,7 @@ class AdminController extends Controller
         $this->authorize('manage_users');
     $Admins=Admin::onlyTrashed()->get();
     return response()->json([
-        'data' =>AdminRegisterResource::colAdmintion($Admins),
+        'data' =>AdminRegisterResource::collectiontion($Admins),
         'message' => "Show Deleted Admin Successfully."
     ]);
     }
