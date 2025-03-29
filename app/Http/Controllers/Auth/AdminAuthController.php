@@ -70,21 +70,24 @@ class AdminAuthController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store(Admin::storageFolder);
+        }
+
 
         $adminData = array_merge(
             $validator->validated(),
             ['password' => bcrypt($request->password)],
-    ['ip' => $request->ip()]
+            ['ip' => $request->ip()]
         );
+
+        if (isset($imagePath)) {
+            $adminData['image'] = $imagePath;
+        }
 
         $admin = Admin::create($adminData);
 
-        // if ($request->hasFile('image')) {
 
-        //     $path = $request->file('image')->store('admin', 'public');
-        //     $admin->image()->create(['path' => $path]);
-        // }
-        // $admin->load('image');
         $admin->save();
         // $admin->notify(new EmailVerificationNotification());
 
