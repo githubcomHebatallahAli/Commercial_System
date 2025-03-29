@@ -77,18 +77,14 @@ class AdminAuthController extends Controller
     ['ip' => $request->ip()]
         );
 
-
-
         $admin = Admin::create($adminData);
 
-        if ($request->hasFile('image')) {
+        // if ($request->hasFile('image')) {
 
-            $path = $request->file('image')->store('admin', 'public');
-            $admin->image()->create(['path' => $path]);
-        }
-
-        $admin->load('image');
-
+        //     $path = $request->file('image')->store('admin', 'public');
+        //     $admin->image()->create(['path' => $path]);
+        // }
+        // $admin->load('image');
         $admin->save();
         // $admin->notify(new EmailVerificationNotification());
 
