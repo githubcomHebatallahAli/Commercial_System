@@ -1,7 +1,17 @@
 <?php
 
+use App\Models\Dept;
 use App\Models\Admin;
+use App\Models\Invoice;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Shipment;
+use App\Policies\DeptPolicy;
 use App\Policies\AdminPolicy;
+use App\Policies\InvoicePolicy;
+use App\Policies\ProductPolicy;
+use App\Policies\CategoryPolicy;
+use App\Policies\ShipmentPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -27,6 +37,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ->booted(function() {
 
             Gate::policy(Admin::class, AdminPolicy::class);
+            Gate::policy(Category::class, CategoryPolicy::class);
+            Gate::policy(Product::class, ProductPolicy::class);
+            Gate::policy(Dept::class, DeptPolicy::class);
+            Gate::policy(Shipment::class, ShipmentPolicy::class);
+            Gate::policy(Invoice::class, InvoicePolicy::class);
 
     })->create();
 

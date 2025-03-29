@@ -64,29 +64,29 @@ class Product extends Model
         ->withPivot('quantity','total');
     }
 
-    public function newProducts()
-    {
-        return $this->hasMany(Newproduct::class);
-    }
+    // public function newProducts()
+    // {
+    //     return $this->hasMany(Newproduct::class);
+    // }
 
-    public function premProducts()
-    {
-        return $this->hasMany(Premproduct::class);
-    }
+    // public function premProducts()
+    // {
+    //     return $this->hasMany(Premproduct::class);
+    // }
 
-    public function orders()
-    {
-        return $this->belongsToMany(Order::class, 'order_products')
-                    ->withPivot('quantity', 'total','profit')
-                    ->withTimestamps();
-    }
+    // public function orders()
+    // {
+    //     return $this->belongsToMany(Order::class, 'order_products')
+    //                 ->withPivot('quantity', 'total','profit')
+    //                 ->withTimestamps();
+    // }
 
-    public function carts()
-    {
-        return $this->belongsToMany(Cart::class, 'cart_products')
-                    ->withPivot('quantity','total','profit')
-                    ->withTimestamps();
-    }
+    // public function carts()
+    // {
+    //     return $this->belongsToMany(Cart::class, 'cart_products')
+    //                 ->withPivot('quantity','total','profit')
+    //                 ->withTimestamps();
+    // }
 
 
 

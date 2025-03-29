@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
-use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ImgRequest;
@@ -65,10 +64,8 @@ class AdminController extends Controller
             $Admin->address = $request->address;
         }
 
-
         $Admin->role_id = $request->role_id;
         $Admin->status = $request->status;
-
         $Admin->save();
 
         return response()->json([
@@ -97,6 +94,7 @@ class AdminController extends Controller
             'message' => 'Admin has been Not Active.'
         ]);
     }
+
     public function active(string $id)
     {
         // $this->authorize('manage_users');
@@ -170,6 +168,7 @@ class AdminController extends Controller
         'message' => "Restore Admin By Id Successfully."
     ]);
     }
+
     public function forceDelete(string $id)
     {
         return $this->forceDeleteModel(Admin::class, $id);

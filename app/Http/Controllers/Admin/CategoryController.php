@@ -15,10 +15,11 @@ class CategoryController extends Controller
     use ManagesModelsTrait;
     public function showAll()
     {
-        $this->authorize('manage_users');
-
-        // $category = Category::withCount('products')->paginate(10);
-        $category = Category::withCount('products')->orderBy('created_at', 'desc')->paginate(10);
+        // $this->authorize('manage_users');
+        $this->authorize('showAll',Category::class);
+        $category = Category::withCount('products')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
                   return response()->json([
                       'data' =>  CategoryResource::collection($category),
@@ -36,7 +37,8 @@ class CategoryController extends Controller
     }
     public function showAllCat()
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('showAllCat',Category::class);
 
         $category = Category::withCount('products')->get();
 
@@ -50,7 +52,8 @@ class CategoryController extends Controller
 
     public function create(CategoryRequest $request)
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('create',Category::class);
            $Category =Category::create ([
                 "name" => $request->name,
                 "status" => 'notView',
@@ -69,14 +72,18 @@ class CategoryController extends Controller
 
         public function edit(string $id)
         {
-            $this->authorize('manage_users');
-  $category = Category::withCount('products')->with('products')->find($id);
+            // $this->authorize('manage_users');
+        $category = Category::withCount('products')
+        ->with('products')
+        ->find($id);
 
             if (!$category) {
                 return response()->json([
                     'message' => "Category not found."
                 ], 404);
             }
+
+            $this->authorize('edit',$category);
 
             return response()->json([
                 'data' => new CategoryProductResource($category),
@@ -94,6 +101,7 @@ class CategoryController extends Controller
                 'message' => "Category not found."
             ], 404);
         }
+        $this->authorize('update',$Category);
            $Category->update([
             "name" => $request->name,
             "status" => $request-> status,
