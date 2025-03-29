@@ -20,6 +20,7 @@ class CategoryResource extends JsonResource
             'productsCount' => $this->productsCount,
             'image' => $this -> image,
             'status' => $this -> status,
+            'role' => new RoleResource($this->role),
         ];
     }
 }

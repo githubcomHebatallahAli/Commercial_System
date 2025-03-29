@@ -16,7 +16,8 @@ class ProductController extends Controller
     use ManagesModelsTrait;
     public function showAll()
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('showAll',Product::class);
 
         // $Product = Product::with('category')->paginate(10);
 
@@ -39,7 +40,8 @@ class ProductController extends Controller
 
     public function showAllProduct()
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('showAllProduct',Product::class);
 
         $Product = Product::with('category')->get();
 
@@ -51,7 +53,7 @@ class ProductController extends Controller
 
     public function create(ProductRequest $request)
     {
-        $this->authorize('manage_users');
+        $this->authorize('create',Product::class);
         $formattedPriceBeforeDiscount = number_format($request->priceBeforeDiscount, 2, '.', '');
         $formattedSellingPrice = number_format($request->sellingPrice, 2, '.', '');
         $formattedPurchesPrice = number_format($request->purchesPrice, 2, '.', '');
@@ -88,7 +90,7 @@ class ProductController extends Controller
 
         public function edit(string $id)
         {
-            $this->authorize('manage_users');
+            // $this->authorize('manage_users');
   $Product = Product::find($id);
 
             if (!$Product) {
@@ -96,6 +98,8 @@ class ProductController extends Controller
                     'message' => "Product not found."
                 ], 404);
             }
+
+            $this->authorize('edit',$Product);
 
             return response()->json([
                 'data' => new ProductResource($Product),
@@ -105,7 +109,7 @@ class ProductController extends Controller
 
         public function update(ProductRequest $request, string $id)
         {
-            $this->authorize('manage_users');
+            // $this->authorize('manage_users');
             $formattedPriceBeforeDiscount = number_format($request->priceBeforeDiscount, 2, '.', '');
             $formattedSellingPrice = number_format($request->sellingPrice, 2, '.', '');
             $formattedPurchesPrice = number_format($request->purchesPrice, 2, '.', '');
@@ -123,6 +127,8 @@ class ProductController extends Controller
                 'message' => "Product not found."
             ], 404);
         }
+
+        $this->authorize('update',$Product);
            $Product->update([
                 "category_id" => $request->category_id,
                 "name" => $request->name,
