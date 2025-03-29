@@ -17,7 +17,8 @@ class DeptController extends Controller
     use ManagesModelsTrait;
     public function showAll()
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
+    $this->authorize('showAll',Dept::class);
 
     $depts = Dept::orderBy('created_at', 'desc')->paginate(10);
     // $paidAmount = Dept::sum('paidAmount');
@@ -55,7 +56,8 @@ class DeptController extends Controller
 
     public function create(DeptRequest $request)
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('create',Dept::class);
 
         $Dept = Dept::create([
             "customerName" => $request->customerName,
@@ -150,8 +152,9 @@ class DeptController extends Controller
 
 public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
     $Dept = Dept::findOrFail($id);
+    $this->authorize('updatePaidAmount',$Dept);
 
     $paidAmount = $request->paidAmount;
     $Dept->paidAmount += $paidAmount;
@@ -177,7 +180,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
 public function edit(string $id)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
 
     $dept = Dept::with('products')->find($id);
 
@@ -186,6 +189,7 @@ public function edit(string $id)
             'message' => "Dept record not found."
         ], 404);
     }
+    $this->authorize('edit',$dept);
 
     $totalDeptPrice = 0;
     $extraAmount = $dept->extraAmount ?? 0;
@@ -230,21 +234,21 @@ public function edit(string $id)
 
 public function update(DeptRequest $request, string $id)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
 
     $Dept = Dept::findOrFail($id);
 
     if (!$Dept) {
-        return response()->json(['message' => "Dept not found."], 404);
+        return response()->json([
+            'message' => "Dept not found."
+        ]);
     }
-
-    // استرجاع المنتجات السابقة مع الكميات المرتبطة بها
+    $this->authorize('update',$Dept);
     $previousProducts = $Dept->products()
         ->select('products.id', 'dept_products.quantity')
         ->pluck('dept_products.quantity', 'products.id')
         ->toArray();
 
-    // تحديث بيانات الدين
     $Dept->update([
         "customerName" => $request->customerName,
         "sellerName" => $request->sellerName,

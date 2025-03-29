@@ -16,7 +16,8 @@ class ShipmentController extends Controller
     use ManagesModelsTrait;
     public function showAll()
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
+        $this->authorize('showAll',Shipment::class);
 
         $Shipment = Shipment::orderBy('created_at', 'desc')->paginate(10);
 
@@ -46,7 +47,8 @@ class ShipmentController extends Controller
 
 public function create(ShipmentRequest $request)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
+    $this->authorize('create',Shipment::class);
 
     $formattedTotalPrice = number_format($request->totalPrice, 2, '.', '');
 
@@ -104,9 +106,10 @@ public function create(ShipmentRequest $request)
 
 public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
 
     $shipment = Shipment::findOrFail($id);
+    $this->authorize('updatePaidAmount',$shipment);
     $paidAmount = $request->paidAmount;
 
     if ($paidAmount > $shipment->remainingAmount) {
@@ -137,7 +140,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
         public function edit(string $id)
         {
-            $this->authorize('manage_users');
+            // $this->authorize('manage_users');
             $Shipment = Shipment::find($id);
 
             if (!$Shipment) {
@@ -145,6 +148,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
                     'message' => "Shipment not found."
                 ], 404);
             }
+            $this->authorize('edit',$Shipment);
 
             return response()->json([
                 'data' => new ShipmentProductResource($Shipment),
@@ -155,7 +159,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
     public function update(ShipmentRequest $request, string $id)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
 
     $Shipment = Shipment::findOrFail($id);
 
@@ -164,6 +168,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
             'message' => "Shipment not found."
         ], 404);
     }
+    $this->authorize('update',$Shipment);
 
     $Shipment->update([
         "supplierName" => $request->supplierName,

@@ -15,9 +15,9 @@ class InvoiceController extends Controller
     use ManagesModelsTrait;
     public function showAll()
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
 
-        // $Invoices = Invoice::paginate(10);
+        $this->authorize('showAll',Invoice::class);
         $Invoices = Invoice::orderBy('created_at', 'desc')->paginate(10);
         return response()->json([
             'data' => $Invoices->map(function ($invoice) {
@@ -45,7 +45,8 @@ class InvoiceController extends Controller
 
 public function create(InvoiceRequest $request)
 {
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
+    $this->authorize('create',Invoice::class);
 
     $Invoice = Invoice::create([
         "customerName" => $request->customerName,
@@ -134,7 +135,7 @@ public function create(InvoiceRequest $request)
 
     public function edit(string $id)
     {
-        $this->authorize('manage_users');
+        // $this->authorize('manage_users');
 
         $Invoice = Invoice::with('products')->find($id);
 
@@ -143,6 +144,8 @@ public function create(InvoiceRequest $request)
                 'message' => "Invoice not found."
             ], 404);
         }
+
+        $this->authorize('edit',$Invoice);
 
         $totalProfit = 0;
         $totalSellingPrice = 0;
@@ -194,7 +197,7 @@ public function create(InvoiceRequest $request)
     public function update(InvoiceRequest $request, string $id)
 {
     //  dd($request->all());
-    $this->authorize('manage_users');
+    // $this->authorize('manage_users');
 
     $Invoice = Invoice::findOrFail($id);
 
@@ -203,6 +206,7 @@ public function create(InvoiceRequest $request)
             'message' => "Invoice not found."
         ], 404);
     }
+    $this->authorize('update',$Invoice);
     $previousProducts = $Invoice->products()
         ->select('products.id', 'invoice_products.quantity')
         ->pluck('invoice_products.quantity', 'products.id')
