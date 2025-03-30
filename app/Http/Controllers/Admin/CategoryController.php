@@ -35,6 +35,7 @@ class CategoryController extends Controller
                       'message' => "Show All Category  With Products."
                   ]);
     }
+    
     public function showAllCat()
     {
         // $this->authorize('manage_users');

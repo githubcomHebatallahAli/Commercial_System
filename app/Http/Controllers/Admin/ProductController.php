@@ -91,7 +91,7 @@ class ProductController extends Controller
         public function edit(string $id)
         {
             // $this->authorize('manage_users');
-  $Product = Product::find($id);
+            $Product = Product::find($id);
 
             if (!$Product) {
                 return response()->json([

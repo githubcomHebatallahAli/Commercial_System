@@ -28,10 +28,10 @@ class CategoryPolicy
     {
         return in_array($admin->role_id, [1,2]);
     }
-    
+
     public function showAllCat(Admin $admin)
     {
-        return in_array($admin->role_id, [1,2]);
+        return in_array($admin->role_id, [1,2,3]);
     }
 
 }
