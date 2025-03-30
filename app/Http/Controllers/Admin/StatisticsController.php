@@ -19,6 +19,10 @@ class StatisticsController extends Controller
     $categoriesCount = Category::count();
     $invoicesCount = Invoice::count();
 
+
+    $paidDeptInvoicesCount = Dept::where('status', 'paid')->count();
+    $invoicesCount += $paidDeptInvoicesCount;
+
     // حساب إجمالي المبيعات
     $salesFromInvoices = Invoice::sum('invoiceAfterDiscount');
     $salesFromDepts = Dept::where('status', 'paid')->sum('depetAfterDiscount');

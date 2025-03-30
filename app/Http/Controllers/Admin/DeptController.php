@@ -180,8 +180,6 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
 public function edit(string $id)
 {
-    // $this->authorize('manage_users');
-
     $dept = Dept::with('products')->find($id);
 
     if (!$dept) {
