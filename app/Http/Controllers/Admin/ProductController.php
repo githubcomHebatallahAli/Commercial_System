@@ -16,12 +16,11 @@ class ProductController extends Controller
     use ManagesModelsTrait;
     public function showAll()
     {
-        // $this->authorize('manage_users');
         $this->authorize('showAll',Product::class);
 
-        // $Product = Product::with('category')->paginate(10);
-
-        $Product = Product::with('category')->orderBy('created_at', 'desc')->paginate(10);
+        $Product = Product::with('category')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
         return response()->json([
             'data' => ShowAllProductResource::collection($Product),
@@ -40,7 +39,6 @@ class ProductController extends Controller
 
     public function showAllProduct()
     {
-        // $this->authorize('manage_users');
         $this->authorize('showAllProduct',Product::class);
 
         $Product = Product::with('category')->get();
@@ -50,6 +48,21 @@ class ProductController extends Controller
             'message' => "Show All Products."
         ]);
     }
+
+    public function showProductLessThan5()
+{
+    $this->authorize('showProductLessThan5', Product::class);
+
+    $products = Product::with('category')
+                        ->where('quantity', '<=', 5)
+                        ->get();
+
+    return response()->json([
+        'data' => ShowAllProductResource::collection($products),
+        'message' => "Show All Products with quantity <= 5."
+    ]);
+}
+
 
     public function create(ProductRequest $request)
     {
@@ -90,7 +103,6 @@ class ProductController extends Controller
 
         public function edit(string $id)
         {
-            // $this->authorize('manage_users');
             $Product = Product::find($id);
 
             if (!$Product) {
@@ -109,7 +121,6 @@ class ProductController extends Controller
 
         public function update(ProductRequest $request, string $id)
         {
-            // $this->authorize('manage_users');
             $formattedPriceBeforeDiscount = number_format($request->priceBeforeDiscount, 2, '.', '');
             $formattedSellingPrice = number_format($request->sellingPrice, 2, '.', '');
             $formattedPurchesPrice = number_format($request->purchesPrice, 2, '.', '');
