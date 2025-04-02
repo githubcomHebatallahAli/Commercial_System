@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Dept;
 use App\Models\Invoice;
 use App\Models\Withdraw;
+use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\WithdrawRequest;
@@ -14,12 +15,15 @@ use App\Http\Resources\Admin\WithdrawResource;
 class WithdrawController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
     {
         $this->authorize('manage_users');
 
-        // $Withdraws =  Withdraw::paginate(10);
-        $Withdraws = Withdraw::orderBy('created_at', 'desc')->paginate(10);
+        $searchTerm = $request->input('search', '');
+
+        $Withdraws = Withdraw::where('personName', 'like', '%' . $searchTerm . '%')
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10);
         return response()->json([
             'data' => $Withdraws->map(function ($Withdraws) {
                 return [
