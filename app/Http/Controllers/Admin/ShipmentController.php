@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
 use App\Models\Shipment;
+use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ShipmentRequest;
@@ -14,12 +15,16 @@ use App\Http\Resources\Admin\ShipmentProductResource;
 class ShipmentController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
     {
-        // $this->authorize('manage_users');
+
         $this->authorize('showAll',Shipment::class);
 
-        $Shipment = Shipment::orderBy('created_at', 'desc')->paginate(10);
+        $searchTerm = $request->input('search', '');
+
+        $Shipment = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%')
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10);
 
         $paidAmount = $Shipment->sum('paidAmount');
         $remainingAmount = $Shipment->sum('remainingAmount');
@@ -47,7 +52,6 @@ class ShipmentController extends Controller
 
 public function create(ShipmentRequest $request)
 {
-    // $this->authorize('manage_users');
     $this->authorize('create',Shipment::class);
 
     $formattedTotalPrice = number_format($request->totalPrice, 2, '.', '');
@@ -106,7 +110,6 @@ public function create(ShipmentRequest $request)
 
 public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 {
-    // $this->authorize('manage_users');
 
     $shipment = Shipment::findOrFail($id);
     $this->authorize('updatePaidAmount',$shipment);
