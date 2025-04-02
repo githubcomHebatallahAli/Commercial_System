@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Dept;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
 use App\Http\Requests\Admin\DeptRequest;
 use App\Http\Resources\Admin\DeptResource;
 use App\Http\Requests\Admin\UpdatePaidAmountRequest;
