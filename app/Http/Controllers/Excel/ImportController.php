@@ -15,10 +15,12 @@ class ImportController extends Controller
     public function __construct(ExcelImportService $importService)
     {
         $this->importService = $importService;
+        $this->authorizeResource(Product::class, 'product');
     }
 
     public function importProducts(ExcelRequest $request)
     {
+        $this->authorize('importProducts', Product::class);
         try {
             $file = $request->file('file');
 

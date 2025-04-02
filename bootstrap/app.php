@@ -42,6 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Gate::policy(Dept::class, DeptPolicy::class);
             Gate::policy(Shipment::class, ShipmentPolicy::class);
             Gate::policy(Invoice::class, InvoicePolicy::class);
+            
 
     })->create();
 

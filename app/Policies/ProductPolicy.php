@@ -33,9 +33,21 @@ class ProductPolicy
     {
         return in_array($admin->role_id, [1,2,3]);
     }
-    
+
     public function showProductLessThan5(Admin $admin)
     {
         return in_array($admin->role_id, [1,2]);
     }
+
+    public function importProducts(Admin $admin)
+    {
+        return in_array($admin->role_id, [1,2]);
+    }
+
+    public function exportProducts(Admin $admin)
+    {
+        return in_array($admin->role_id, [1,2]);
+    }
+
+
 }

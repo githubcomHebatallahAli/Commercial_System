@@ -15,10 +15,12 @@ class ExportController extends Controller
     public function __construct(ExcelExportService $exportService)
     {
         $this->exportService = $exportService;
+        $this->authorizeResource(Product::class, 'product');
     }
 
     public function exportProducts()
     {
+        $this->authorize('exportProducts', Product::class);
         $products = Product::all();
 
         $headers = [
