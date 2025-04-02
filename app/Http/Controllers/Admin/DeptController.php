@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Dept;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
-
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Request;
 use App\Http\Requests\Admin\DeptRequest;
 use App\Http\Resources\Admin\DeptResource;
 use App\Http\Requests\Admin\UpdatePaidAmountRequest;
@@ -18,8 +17,11 @@ class DeptController extends Controller
     use ManagesModelsTrait;
     public function showAll(Request $request)
 {
+    $this->authorize('showAll',Dept::class);
+    
     $searchTerm = $request->input('search', '');
 
+    // إعداد الاستعلام و تصفية النتائج باستخدام where قبل paginate
     $depts = Dept::where('customerName', 'like', '%' . $searchTerm . '%')
                  ->orderBy('created_at', 'desc')
                  ->paginate(10);
