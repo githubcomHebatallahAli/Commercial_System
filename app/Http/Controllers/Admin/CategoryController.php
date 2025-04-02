@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Category;
+use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -13,11 +14,13 @@ use App\Http\Resources\Admin\CategoryProductResource;
 class CategoryController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
     {
-        // $this->authorize('manage_users');
         $this->authorize('showAll',Category::class);
+        $searchTerm = $request->input('search', '');
+
         $category = Category::withCount('products')
+        ->where('name', 'like', '%' . $searchTerm . '%')
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
@@ -35,7 +38,7 @@ class CategoryController extends Controller
                       'message' => "Show All Category  With Products."
                   ]);
     }
-    
+
     public function showAllCat()
     {
         // $this->authorize('manage_users');
