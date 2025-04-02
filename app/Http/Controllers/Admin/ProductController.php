@@ -18,12 +18,19 @@ class ProductController extends Controller
     {
         $this->authorize('showAll',Product::class);
         $searchTerm = $request->input('search', '');
+        $quantityFilter = $request->input('quantity', ''); 
 
         $Product = Product::with('category')
-        ->where('name', 'like', '%' . $searchTerm . '%')
-        // ->where('name', 'like', $searchTerm . '%')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+            ->where('name', 'like', '%' . $searchTerm . '%');
+
+        if ($quantityFilter === '0') {
+            $Product->where('quantity', 0);
+        } elseif ($quantityFilter === '5_or_less') {
+            $Product->where('quantity', '<=', 5);
+        }
+
+        $Product = $Product->orderBy('created_at', 'desc')
+                           ->paginate(10);
 
         return response()->json([
             'data' => ShowAllProductResource::collection($Product),
