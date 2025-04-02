@@ -14,11 +14,13 @@ use App\Http\Resources\Admin\ShowAllProductResource;
 class ProductController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
     {
         $this->authorize('showAll',Product::class);
+        $searchTerm = $request->input('search', '');
 
         $Product = Product::with('category')
+        ->where('name', 'like', '%' . $searchTerm . '%')
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
