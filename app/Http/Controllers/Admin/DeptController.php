@@ -15,13 +15,14 @@ use App\Http\Requests\Admin\UpdatePaidAmountRequest;
 class DeptController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
 {
-    // $this->authorize('manage_users');
-    $this->authorize('showAll',Dept::class);
+    $searchTerm = $request->input('search', '');
 
-    $depts = Dept::orderBy('created_at', 'desc')->paginate(10);
-    // $paidAmount = Dept::sum('paidAmount');
+    $depts = Dept::where('customerName', 'like', '%' . $searchTerm . '%')
+                 ->orderBy('created_at', 'desc')
+                 ->paginate(10);
+
     $paidAmount = Dept::where('status', 'pending')->sum('paidAmount');
     $remainingAmount = Dept::sum('remainingAmount');
 
