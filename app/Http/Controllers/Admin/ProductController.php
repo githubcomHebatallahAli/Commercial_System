@@ -18,15 +18,15 @@ class ProductController extends Controller
     {
         $this->authorize('showAll',Product::class);
         $searchTerm = $request->input('search', '');
-        $quantityFilter = $request->input('quantity', ''); 
+        $quantityFilter = $request->input('quantity', '');
 
         $Product = Product::with('category')
             ->where('name', 'like', '%' . $searchTerm . '%');
 
         if ($quantityFilter === '0') {
             $Product->where('quantity', 0);
-        } elseif ($quantityFilter === '5_or_less') {
-            $Product->where('quantity', '<=', 5);
+        } elseif ($quantityFilter === '1_to_5') {
+            $Product->whereBetween('quantity', [1, 5]);
         }
 
         $Product = $Product->orderBy('created_at', 'desc')
