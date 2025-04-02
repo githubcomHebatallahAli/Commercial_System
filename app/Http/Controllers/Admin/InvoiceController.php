@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Invoice;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use App\Traits\ManagesModelsTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InvoiceRequest;
@@ -13,12 +14,14 @@ use App\Http\Resources\Admin\InvoiceResource;
 class InvoiceController extends Controller
 {
     use ManagesModelsTrait;
-    public function showAll()
+    public function showAll(Request $request)
     {
-        // $this->authorize('manage_users');
-
         $this->authorize('showAll',Invoice::class);
-        $Invoices = Invoice::orderBy('created_at', 'desc')->paginate(10);
+        $searchTerm = $request->input('search', '');
+
+        $Invoices = Invoice::where('customerName', 'like', '%' . $searchTerm . '%')
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10);
         return response()->json([
             'data' => $Invoices->map(function ($invoice) {
                 return [
@@ -45,7 +48,7 @@ class InvoiceController extends Controller
 
 public function create(InvoiceRequest $request)
 {
-    // $this->authorize('manage_users');
+
     $this->authorize('create',Invoice::class);
 
     $Invoice = Invoice::create([
@@ -135,8 +138,6 @@ public function create(InvoiceRequest $request)
 
     public function edit(string $id)
     {
-        // $this->authorize('manage_users');
-
         $Invoice = Invoice::with('products')->find($id);
 
         if (!$Invoice) {
@@ -196,9 +197,6 @@ public function create(InvoiceRequest $request)
 
     public function update(InvoiceRequest $request, string $id)
 {
-    //  dd($request->all());
-    // $this->authorize('manage_users');
-
     $Invoice = Invoice::findOrFail($id);
 
     if (!$Invoice) {
