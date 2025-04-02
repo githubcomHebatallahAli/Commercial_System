@@ -20,8 +20,8 @@ class ProductController extends Controller
         $searchTerm = $request->input('search', '');
 
         $Product = Product::with('category')
-        // ->where('name', 'like', '%' . $searchTerm . '%')
-        ->where('name', 'like', $searchTerm . '%') 
+        ->where('name', 'like', '%' . $searchTerm . '%')
+        // ->where('name', 'like', $searchTerm . '%')
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
