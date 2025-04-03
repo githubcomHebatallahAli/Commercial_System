@@ -102,8 +102,8 @@ public function showAll(Request $request)
             'prev_page_url' => $depts->previousPageUrl(),
         ],
         'statistics' => [
-            'total_paid' => $totalPaidAmount,
-            'total_remaining' => $totalRemainingAmount,
+            'paid_amount' => $totalPaidAmount,
+            'remaining_amount' => $totalRemainingAmount,
         ],
         'message' => "تم عرض الفواتير بنجاح."
     ]);
