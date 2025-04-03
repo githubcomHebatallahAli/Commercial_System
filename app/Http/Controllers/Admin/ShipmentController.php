@@ -15,39 +15,79 @@ use App\Http\Resources\Admin\ShipmentProductResource;
 class ShipmentController extends Controller
 {
     use ManagesModelsTrait;
+    // public function showAll(Request $request)
+    // {
+
+    //     $this->authorize('showAll',Shipment::class);
+
+    //     $searchTerm = $request->input('search', '');
+
+    //     $Shipment = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%')
+    //                  ->orderBy('created_at', 'desc')
+    //                  ->paginate(10);
+
+    //     $paidAmount = $Shipment->sum('paidAmount');
+    //     $remainingAmount = $Shipment->sum('remainingAmount');
+
+    //               return response()->json([
+    //                   'data' =>  ShipmentResource::collection($Shipment),
+    //                   'pagination' => [
+    //                     'total' => $Shipment->total(),
+    //                     'count' => $Shipment->count(),
+    //                     'per_page' => $Shipment->perPage(),
+    //                     'current_page' => $Shipment->currentPage(),
+    //                     'total_pages' => $Shipment->lastPage(),
+    //                     'next_page_url' => $Shipment->nextPageUrl(),
+    //                     'prev_page_url' => $Shipment->previousPageUrl()
+    //                 ],
+    //                 'statistics' => [
+    //                 'paid_amount' => number_format($paidAmount, 2, '.', ''),
+    //                 'remaining_amount' => number_format($remainingAmount, 2, '.', ''),
+    //                 ],
+
+    //                   'message' => "Show All Shipment."
+    //               ]);
+    // }
+
     public function showAll(Request $request)
-    {
+{
+    $this->authorize('showAll', Shipment::class);
 
-        $this->authorize('showAll',Shipment::class);
+    $searchTerm = $request->input('search', '');
+    $statusFilter = $request->input('status', '');
 
-        $searchTerm = $request->input('search', '');
+    $query = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%');
 
-        $Shipment = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%')
-                     ->orderBy('created_at', 'desc')
-                     ->paginate(10);
-
-        $paidAmount = $Shipment->sum('paidAmount');
-        $remainingAmount = $Shipment->sum('remainingAmount');
-
-                  return response()->json([
-                      'data' =>  ShipmentResource::collection($Shipment),
-                      'pagination' => [
-                        'total' => $Shipment->total(),
-                        'count' => $Shipment->count(),
-                        'per_page' => $Shipment->perPage(),
-                        'current_page' => $Shipment->currentPage(),
-                        'total_pages' => $Shipment->lastPage(),
-                        'next_page_url' => $Shipment->nextPageUrl(),
-                        'prev_page_url' => $Shipment->previousPageUrl()
-                    ],
-                    'statistics' => [
-                    'paid_amount' => number_format($paidAmount, 2, '.', ''),
-                    'remaining_amount' => number_format($remainingAmount, 2, '.', ''),
-                    ],
-
-                      'message' => "Show All Shipment."
-                  ]);
+    if ($statusFilter === 'paid') {
+        $query->where('status', 'paid');
+    } elseif ($statusFilter === 'unpaid') {
+        $query->where('status', 'pending');
     }
+
+    $shipments = $query->orderBy('created_at', 'desc')
+                      ->paginate(10);
+
+    $paidAmount = Shipment::sum('paidAmount');
+    $remainingAmount = Shipment::where('status', 'pending')->sum('remainingAmount');
+
+    return response()->json([
+        'data' => ShipmentResource::collection($shipments),
+        'pagination' => [
+            'total' => $shipments->total(),
+            'count' => $shipments->count(),
+            'per_page' => $shipments->perPage(),
+            'current_page' => $shipments->currentPage(),
+            'total_pages' => $shipments->lastPage(),
+            'next_page_url' => $shipments->nextPageUrl(),
+            'prev_page_url' => $shipments->previousPageUrl()
+        ],
+        'statistics' => [
+            'paid_amount' => number_format($paidAmount, 2, '.', ''),
+            'remaining_amount' => number_format($remainingAmount, 2, '.', ''),
+        ],
+        'message' => "Show All Shipment."
+    ]);
+}
 
 
 public function create(ShipmentRequest $request)

@@ -111,7 +111,6 @@ public function showAll(Request $request)
 
     public function create(DeptRequest $request)
     {
-        // $this->authorize('manage_users');
         $this->authorize('create',Dept::class);
 
         $Dept = Dept::create([
