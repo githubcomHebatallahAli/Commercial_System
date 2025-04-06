@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
-            $table->string('supplierName');
+            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
             $table->string('importer');
-            $table->string('place');
             $table->unsignedBigInteger('shipmentProductsCount')->default(0);
             $table->decimal('totalPrice', 15, 2)->default(0);
             $table->decimal('paidAmount', 10, 2);

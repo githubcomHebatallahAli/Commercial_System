@@ -11,9 +11,10 @@ class Shipment extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'supplierName',
+        'supplier_id',
+        // 'supplierName',
         'importer',
-        'place',
+        // 'place',
         'creationDate',
         'shipmentProductsCount',
         'totalPrice',
@@ -88,6 +89,11 @@ public function calculateTotalPrice()
     return $this->products->sum(function ($product) {
         return $product->pivot->price;
     });
+}
+
+public function supplier()
+{
+    return $this->belongsTo(Supplier::class);
 }
 
 

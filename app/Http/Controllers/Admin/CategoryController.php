@@ -41,7 +41,6 @@ class CategoryController extends Controller
 
     public function showAllCat()
     {
-        // $this->authorize('manage_users');
         $this->authorize('showAllCat',Category::class);
 
         $category = Category::withCount('products')->get();
@@ -56,7 +55,6 @@ class CategoryController extends Controller
 
     public function create(CategoryRequest $request)
     {
-        // $this->authorize('manage_users');
         $this->authorize('create',Category::class);
            $Category =Category::create ([
                 "name" => $request->name,

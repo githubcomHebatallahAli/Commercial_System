@@ -6,12 +6,14 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Shipment;
+use App\Models\Supplier;
 use App\Policies\DeptPolicy;
 use App\Policies\AdminPolicy;
 use App\Policies\InvoicePolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\ShipmentPolicy;
+use App\Policies\SupplierPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -42,7 +44,8 @@ return Application::configure(basePath: dirname(__DIR__))
             Gate::policy(Dept::class, DeptPolicy::class);
             Gate::policy(Shipment::class, ShipmentPolicy::class);
             Gate::policy(Invoice::class, InvoicePolicy::class);
-            
+            Gate::policy(Supplier::class, SupplierPolicy::class);
+
 
     })->create();
 

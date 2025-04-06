@@ -56,7 +56,13 @@ class ShipmentController extends Controller
     $searchTerm = $request->input('search', '');
     $statusFilter = $request->input('status', '');
 
-    $query = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%');
+    // $query = Shipment::where('supplierName', 'like', '%' . $searchTerm . '%');
+    $query = Shipment::with('supplier')
+    ->when($searchTerm, function ($query) use ($searchTerm) {
+        $query->whereHas('supplier', function ($q) use ($searchTerm) {
+            $q->where('supplierName', 'like', '%' . $searchTerm . '%');
+        });
+    });
 
     if ($statusFilter === 'paid') {
         $query->where('status', 'paid');
@@ -97,9 +103,10 @@ public function create(ShipmentRequest $request)
     $formattedTotalPrice = number_format($request->totalPrice, 2, '.', '');
 
     $Shipment = Shipment::create([
-        "supplierName" => $request->supplierName,
+        // "supplierName" => $request->supplierName,
+        "supplier_id" => $request->supplier_id,
         "importer" => $request->importer,
-        "place" => $request->place,
+        // "place" => $request->place,
         'paidAmount' => $request->paidAmount ?? 0,
         'status' => 'pending',
         'creationDate' => now()->timezone('Africa/Cairo')->format('Y-m-d h:i:s'),
@@ -183,8 +190,7 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
         public function edit(string $id)
         {
-            // $this->authorize('manage_users');
-            $Shipment = Shipment::find($id);
+            $Shipment = Shipment::with('supplier')->find($id);
 
             if (!$Shipment) {
                 return response()->json([
@@ -202,7 +208,6 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
 
     public function update(ShipmentRequest $request, string $id)
 {
-    // $this->authorize('manage_users');
 
     $Shipment = Shipment::findOrFail($id);
 
@@ -214,9 +219,9 @@ public function updatePaidAmount(UpdatePaidAmountRequest $request, $id)
     $this->authorize('update',$Shipment);
 
     $Shipment->update([
-        "supplierName" => $request->supplierName,
+        "supplier_id" => $request->supplier_id,
         "importer" => $request->importer,
-        "place" => $request->place,
+        // "place" => $request->place,
         'paidAmount' => $request->paidAmount ?? 0,
         'status' => 'pending',
         'creationDate' => now()->timezone('Africa/Cairo')->format('Y-m-d h:i:s'),

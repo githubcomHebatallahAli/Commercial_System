@@ -16,9 +16,10 @@ class ShipmentProductResource extends JsonResource
     {
         return [
             "id" => $this -> id,
-            'supplierName' => $this -> supplierName,
+            'supplierName' => $this->supplier->supplierName,
             'importer' => $this -> importer ,
-            'place' => $this -> place,
+            // 'place' => $this -> place,
+            'place' => $this ->supplier->place,
             "totalPrice" => number_format($this->totalPrice, 2, '.', ''),
             'shipmentProductsCount' => $this -> shipmentProductsCount,
             'creationDate' => $this -> creationDate,
