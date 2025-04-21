@@ -50,12 +50,7 @@ class AdminAuthController extends Controller
         return $this->createNewToken($token);
     }
 
-    /**
-     * Register an Admin.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    // Register an Admin.
+
     public function register(AdminRegisterRequest $request)
     {
         if (!Gate::allows('create', Admin::class)) {
@@ -99,13 +94,6 @@ class AdminAuthController extends Controller
     }
 
 
-
-
-    /**
-     * Log the admin out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout()
     {
         // التحقق من إذن المستخدم لتسجيل الخروج
@@ -141,21 +129,13 @@ class AdminAuthController extends Controller
     }
 
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function refresh()
     {
         return $this->createNewToken(auth()->guard('admin')->refresh());
     }
 
-    /**
-     * Get the authenticated Admin.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function userProfile()
     {
         return response()->json([
@@ -163,13 +143,7 @@ class AdminAuthController extends Controller
         ]);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     protected function createNewToken($token)
     {
         $admin = auth()->guard('admin')->user();
