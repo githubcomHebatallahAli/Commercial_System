@@ -21,7 +21,6 @@ class Dept extends Model
         'deptAfterDiscount',
         'profit',
         'extraAmount'
-
     ];
 
     public function products()

@@ -16,47 +16,6 @@ use App\Http\Requests\Admin\UpdatePaidAmountRequest;
 class DeptController extends Controller
 {
     use ManagesModelsTrait;
-//     public function showAll(Request $request)
-// {
-//     $this->authorize('showAll',Dept::class);
-
-//     $searchTerm = $request->input('search', '');
-
-//     $depts = Dept::where('customerName', 'like', '%' . $searchTerm . '%')
-//                  ->orderBy('created_at', 'desc')
-//                  ->paginate(10);
-
-//     $paidAmount = Dept::where('status', 'pending')->sum('paidAmount');
-//     $remainingAmount = Dept::sum('remainingAmount');
-
-//     return response()->json([
-//         'data' => $depts->map(function ($dept) {
-//             return [
-//                 'id' => $dept->id,
-//                 'customerName' => $dept->customerName,
-//                 'status' => $dept->status,
-//                 'paidAmount' => $dept->paidAmount,
-//                 'remainingAmount' => $dept->remainingAmount,
-//                 'depetAfterDiscount' => $dept->depetAfterDiscount,
-//                 'creationDate' => $dept->creationDate,
-//             ];
-//         }),
-//         'pagination' => [
-//             'total' => $depts->total(),
-//             'count' => $depts->count(),
-//             'per_page' => $depts->perPage(),
-//             'current_page' => $depts->currentPage(),
-//             'total_pages' => $depts->lastPage(),
-//             'next_page_url' => $depts->nextPageUrl(),
-//             'prev_page_url' => $depts->previousPageUrl(),
-//         ],
-//         'statistics' => [
-//             'paid_amount' => $paidAmount,
-//             'remaining_amount' => $remainingAmount,
-//         ],
-//         'message' => "Show All Depts Successfully."
-//     ]);
-// }
 
 public function showAll(Request $request)
 {
