@@ -27,7 +27,7 @@ class AdminSeeder extends Seeder
         DB::table('admins')->insert([
             'name' => 'Admin',
             'email' => 'admin@mail.com',
-            'password' => Hash::make('admin@234'),
+            'password' => Hash::make('234567'),
             'phoNum'=>'0111334455',
             'address' => 'Moharram Bey',
             'role_id' => '2',
@@ -37,7 +37,7 @@ class AdminSeeder extends Seeder
         DB::table('admins')->insert([
             'name' => 'Employee',
             'email' => 'employee@mail.com',
-            'password' => Hash::make('employee@345'),
+            'password' => Hash::make('345678'),
             'phoNum'=>'0111445566',
             'address' => 'Moharram Bey',
             'role_id' => '3',
